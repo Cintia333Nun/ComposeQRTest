@@ -1,5 +1,6 @@
 package com.example.composeqrtest.view.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +38,7 @@ import com.example.composeqrtest.view.navhost.NavigationScreens
 
 @Composable
 fun HomeQrScreen(navController: NavHostController) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -92,12 +95,8 @@ fun HomeQrScreen(navController: NavHostController) {
                     containerColor = Color.Transparent
                 ),
                 onClick = {
-                    navController.navigate(NavigationScreens.HomeQr.route) {
-                        popUpTo(NavigationScreens.ScanQr.route) {
-                            inclusive = true
-                        }
-                    }
-                    //navController.navigate(NavigationScreens.HomeQr.route)
+                    navController.navigate(NavigationScreens.HomeQr.route)
+                    Toast.makeText(context, "It's working on that", Toast.LENGTH_LONG).show()
                 }
             ) {
                 Text(

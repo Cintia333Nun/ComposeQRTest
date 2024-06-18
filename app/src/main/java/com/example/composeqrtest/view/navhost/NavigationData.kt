@@ -1,8 +1,7 @@
 package com.example.composeqrtest.view.navhost
 
 enum class ScreenType {
-    HOME_QR, SCAN_QR, GENERATE_QR,
-    RESULT_QR, IMAGE_PICKER_QR
+    HOME_QR, SCAN_QR, RESULT_QR, GENERATE_QR,
 }
 
 sealed class NavigationScreens(val route: String) {

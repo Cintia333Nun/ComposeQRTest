@@ -1,8 +1,13 @@
 package com.example.composeqrtest.view.screens
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.view.View
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,7 +59,11 @@ import com.example.composeqrtest.ui.theme.primary
 import com.example.composeqrtest.ui.theme.white
 import com.example.composeqrtest.utilities.findActivity
 import com.example.composeqrtest.view.navhost.NavigationScreens
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.MultiFormatReader
+import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.client.android.BeepManager
+import com.google.zxing.common.HybridBinarizer
 import com.journeyapps.barcodescanner.camera.CameraSettings
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -64,6 +73,32 @@ import java.nio.charset.StandardCharsets
 fun ScanQrScreen(navController: NavHostController) {
     val context = LocalContext.current
     var cleanupQrRes: (() -> Unit)? = null
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri: Uri? ->
+            if(uri != null) {
+                try {
+                    val inputStream = context.contentResolver.openInputStream(uri)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    val width = bitmap.width
+                    val height = bitmap.height
+                    val pixels = IntArray(width*height)
+                    bitmap.getPixels(pixels, 0, width,0, 0, width, height)
+                    bitmap.recycle()
+
+                    val source = RGBLuminanceSource(width, height, pixels)
+                    val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
+                    val reader = MultiFormatReader()
+
+                    val result = reader.decode(binaryBitmap)
+                    navController.navigate("${NavigationScreens.ResultQr.route}/${result.text}")
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
+                }
+            }
+        }
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -132,9 +167,11 @@ fun ScanQrScreen(navController: NavHostController) {
                     containerColor = Color.Transparent
                 ),
                 onClick = {
-                    Toast.makeText(
-                        context, "Add image", Toast.LENGTH_LONG
-                    ).show()
+                    launcher.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
+                    )
                 }
             ) {
                 Icon(
@@ -159,6 +196,7 @@ fun ScanQrScreen(navController: NavHostController) {
             }
         }
     }
+
     DisposableEffect(Unit) {
         onDispose {
             cleanupQrRes?.invoke()
