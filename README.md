@@ -18,3 +18,10 @@
        alt="Imagen" 
        width="280" 
        height="600">
+<h3>**Result QR Screen:**</h3>
+<img src="https://github.com/Cintia333Nun/ComposeQRTest/assets/55222275/bee747c7-7393-48f4-83d6-b718ca881371" 
+       alt="Imagen" 
+       width="280" 
+       height="600">
+
+
