@@ -92,7 +92,12 @@ fun HomeQrScreen(navController: NavHostController) {
                     containerColor = Color.Transparent
                 ),
                 onClick = {
-                    navController.navigate(NavigationScreens.HomeQr.route)
+                    navController.navigate(NavigationScreens.HomeQr.route) {
+                        popUpTo(NavigationScreens.ScanQr.route) {
+                            inclusive = true
+                        }
+                    }
+                    //navController.navigate(NavigationScreens.HomeQr.route)
                 }
             ) {
                 Text(

@@ -1,12 +1,10 @@
 package com.example.composeqrtest.view.screens
 
-import android.content.Context
-import android.view.View
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,29 +38,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.composeqrtest.R
-import com.example.composeqrtest.databinding.LayoutCustomBarcodeBinding
 import com.example.composeqrtest.ui.theme.accent
 import com.example.composeqrtest.ui.theme.primary
 import com.example.composeqrtest.ui.theme.white
-import com.example.composeqrtest.utilities.findActivity
-import com.example.composeqrtest.view.navhost.NavigationScreens
-import com.google.zxing.client.android.BeepManager
-import com.journeyapps.barcodescanner.camera.CameraSettings
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
+import com.example.composeqrtest.utilities.copyTextToClipboard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScanQrScreen(navController: NavHostController) {
+fun ResultQrScreen(navController: NavHostController, result: String?) {
     val context = LocalContext.current
-    var cleanupQrRes: (() -> Unit)? = null
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -88,7 +75,7 @@ fun ScanQrScreen(navController: NavHostController) {
                 title = {
                     Text(
                         fontSize = 16.sp,
-                        text = "Scan your QR CODE",
+                        text = "Copy your QR DATA",
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -118,23 +105,24 @@ fun ScanQrScreen(navController: NavHostController) {
                 painter = painterResource(id = R.drawable.scan_me2),
                 contentDescription = stringResource(id = R.string.app_name)
             )
-            AndroidView(
-                factory = {
-                    View.inflate(context, R.layout.layout_custom_barcode, null)
-                },
-                update = {
-                    cleanupQrRes = loadCameraAndBeepManager(navController, context, it)
-                },
+            Text(
+                modifier = Modifier
+                    .border(
+                        BorderStroke(2.dp, color = primary),
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.White)
+                    .padding(10.dp),
+                text = result?:""
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Button(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent
                 ),
                 onClick = {
-                    Toast.makeText(
-                        context, "Add image", Toast.LENGTH_LONG
-                    ).show()
+                    context.copyTextToClipboard(result?:"")
                 }
             ) {
                 Icon(
@@ -154,57 +142,9 @@ fun ScanQrScreen(navController: NavHostController) {
                             )
                         )
                         .padding(all = 14.dp),
-                    text = "Add QR code from device"
+                    text = "Copy data"
                 )
             }
         }
     }
-    DisposableEffect(Unit) {
-        onDispose {
-            cleanupQrRes?.invoke()
-        }
-    }
-}
-
-fun loadCameraAndBeepManager(
-    navController: NavHostController, context: Context, view: View
-) : () -> Unit {
-    val beepManager = BeepManager(context.findActivity())
-    beepManager.isBeepEnabled = true
-    beepManager.isVibrateEnabled = true
-    val binding = LayoutCustomBarcodeBinding.bind(view)
-    binding.barcodeView.apply {
-        resume()
-        val settings = CameraSettings()
-        settings.requestedCameraId = 0
-        cameraSettings  = settings
-        decodeSingle { result ->
-            beepManager.playBeepSound()
-            val resultText = result?.result?.text ?: ""
-            val urlData = URLEncoder.encode(
-                resultText, StandardCharsets.UTF_8.toString()
-            )
-            try {
-                pause()
-                navController.navigate(
-                    "${NavigationScreens.ResultQr.route}/$urlData"
-                )
-            } catch (exception: Exception) {
-                exception.printStackTrace()
-                Toast.makeText(
-                    context, "Not match code", Toast.LENGTH_LONG
-                ).show()
-            }
-        }
-    }
-
-    return {
-        binding.barcodeView.pause()
-    }
-}
-
-@Composable
-@Preview(showSystemUi = true)
-fun PreviewScanQrScreen() {
-    ScanQrScreen( navController = rememberNavController() )
 }
