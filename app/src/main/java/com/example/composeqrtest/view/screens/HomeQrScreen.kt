@@ -41,7 +41,7 @@ fun HomeQrScreen(navController: NavHostController) {
             .fillMaxSize()
             .padding(16.dp)
             .border(
-                BorderStroke(3.dp, color = primary),
+                BorderStroke(2.dp, color = primary),
                 shape = RoundedCornerShape(16.dp)
             )
             .clip(RoundedCornerShape(16.dp))
@@ -68,7 +68,7 @@ fun HomeQrScreen(navController: NavHostController) {
                     containerColor = Color.Transparent
                 ),
                 onClick = {
-                    navController.navigate(NavigationScreens.HomeQr.route)
+                    navController.navigate(NavigationScreens.ScanQr.route)
                 }
             ) {
                 Text(
@@ -116,6 +116,6 @@ fun HomeQrScreen(navController: NavHostController) {
 
 @Composable
 @Preview(showSystemUi = true)
-fun Preview() {
+fun PreviewHomeQrScreen() {
     HomeQrScreen(navController = rememberNavController())
 }

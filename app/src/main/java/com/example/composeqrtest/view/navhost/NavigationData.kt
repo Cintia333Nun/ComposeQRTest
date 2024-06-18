@@ -7,4 +7,6 @@ enum class ScreenType {
 
 sealed class NavigationScreens(val route: String) {
     data object HomeQr : NavigationScreens(ScreenType.HOME_QR.name)
+    data object ScanQr : NavigationScreens(ScreenType.SCAN_QR.name)
+    data object ResultQr : NavigationScreens(ScreenType.SCAN_QR.name)
 }

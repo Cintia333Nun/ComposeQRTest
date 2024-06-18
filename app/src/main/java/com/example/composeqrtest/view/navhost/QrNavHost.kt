@@ -2,12 +2,11 @@ package com.example.composeqrtest.view.navhost
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.composeqrtest.view.screens.HomeQrScreen
+import com.example.composeqrtest.view.screens.ScanQrScreen
 
 @Composable
 fun QrNavHost(
@@ -23,11 +22,8 @@ fun QrNavHost(
         composable(NavigationScreens.HomeQr.route) {
             HomeQrScreen(navController = navController)
         }
+        composable(NavigationScreens.ScanQr.route) {
+            ScanQrScreen(navController = navController)
+        }
     }
-}
-
-@Preview
-@Composable
-private fun PreviewQrNavHost() {
-    QrNavHost(navController = rememberNavController())
 }

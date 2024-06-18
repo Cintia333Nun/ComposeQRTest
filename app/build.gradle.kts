@@ -19,7 +19,9 @@ android {
             useSupportLibrary = true
         }
     }
-
+    buildFeatures{
+        viewBinding = true
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -58,7 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.zxing)
+    implementation (libs.zxing)
     implementation (libs.zxing.android.embedded)
     implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
